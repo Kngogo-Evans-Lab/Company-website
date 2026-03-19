@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Admin — Sketch Tech Solutions</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--black:#0A0A0A;--white:#fff;--off:#F5F5F5;--gray:#6B7280;--border:#D1D5DB;--blue:#2563EB;--green:#16A34A;--red:#DC2626;}
+body{font-family:'Inter',sans-serif;background:var(--off);color:var(--black);min-height:100vh;}
+
+/* LOGIN */
+.login-wrap{min-height:100vh;display:flex;align-items:center;justify-content:center;background:var(--black);}
+.login-box{background:var(--white);width:340px;padding:36px;border-radius:12px;}
+.login-logo{font-size:18px;font-weight:800;letter-spacing:-0.5px;margin-bottom:6px;}
+.login-logo span{color:var(--blue);}
+.login-sub{font-size:12px;color:var(--gray);margin-bottom:28px;}
+.login-field{margin-bottom:14px;}
+.login-field label{display:block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--gray);margin-bottom:5px;}
+.login-field input{width:100%;padding:11px 13px;border:1.5px solid var(--border);border-radius:6px;font-size:14px;font-family:'Inter',sans-serif;outline:none;}
+.login-field input:focus{border-color:var(--black);}
+.login-btn{width:100%;background:var(--black);color:#fff;padding:12px;font-size:13px;font-weight:600;border:none;border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif;margin-top:4px;}
+.login-btn:hover{background:#222;}
+.login-err{font-size:12px;color:var(--red);margin-top:10px;text-align:center;display:none;}
+
+/* APP */
+.app{display:none;min-height:100vh;}
+.topbar{background:var(--black);padding:0 20px;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+.topbar-logo{font-size:14px;font-weight:700;color:#fff;letter-spacing:-0.3px;}
+.topbar-logo span{color:var(--blue);}
+.topbar-right{display:flex;align-items:center;gap:10px;}
+.topbar-count{font-size:11px;color:rgba(255,255,255,0.45);font-family:'DM Mono',monospace;}
+.btn-logout{background:rgba(255,255,255,0.08);color:rgba(255,255,255,0.7);padding:6px 12px;font-size:11px;font-weight:500;border:1px solid rgba(255,255,255,0.1);border-radius:5px;cursor:pointer;font-family:'Inter',sans-serif;}
+.btn-logout:hover{background:rgba(255,255,255,0.15);}
+
+.main{max-width:800px;margin:0 auto;padding:20px 16px 80px;}
+
+/* SHEET URL SETUP */
+.setup-banner{background:#FEF3C7;border:1.5px solid #F59E0B;border-radius:8px;padding:14px 16px;margin-bottom:20px;font-size:12px;line-height:1.7;}
+.setup-banner strong{display:block;margin-bottom:4px;font-size:13px;}
+.setup-field{display:flex;gap:8px;margin-top:10px;}
+.setup-field input{flex:1;padding:8px 11px;border:1.5px solid var(--border);border-radius:5px;font-size:12px;font-family:'Inter',sans-serif;outline:none;}
+.setup-field input:focus{border-color:var(--black);}
+.setup-field button{background:var(--black);color:#fff;padding:8px 14px;font-size:12px;font-weight:600;border:none;border-radius:5px;cursor:pointer;font-family:'Inter',sans-serif;white-space:nowrap;}
+
+/* ADD BUTTON */
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.section-title{font-size:16px;font-weight:700;}
+.btn-add{background:var(--black);color:#fff;padding:9px 16px;font-size:12px;font-weight:600;border:none;border-radius:6px;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;gap:6px;}
+.btn-add:hover{background:#222;}
+
+/* PRODUCT LIST */
+.prod-list{display:flex;flex-direction:column;gap:8px;}
+.prod-item{background:var(--white);border:1.5px solid var(--border);border-radius:8px;padding:14px 16px;display:flex;align-items:center;gap:12px;transition:box-shadow .15s;}
+.prod-item:hover{box-shadow:0 2px 12px rgba(0,0,0,0.07);}
+.prod-drag{color:var(--gray);cursor:grab;font-size:16px;flex-shrink:0;}
+.prod-emoji-big{font-size:26px;flex-shrink:0;}
+.prod-info{flex:1;min-width:0;}
+.prod-name-row{display:flex;align-items:center;gap:7px;margin-bottom:2px;}
+.prod-item-name{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.prod-item-badge{font-family:'DM Mono',monospace;font-size:8px;padding:2px 6px;border-radius:2px;border:1px solid var(--border);color:var(--gray);}
+.prod-item-badge.hot{border-color:var(--black);color:var(--black);}
+.prod-item-badge.new{border-color:var(--blue);color:var(--blue);}
+.prod-meta{font-size:11px;color:var(--gray);}
+.prod-price-tag{font-size:13px;font-weight:700;flex-shrink:0;}
+.prod-actions{display:flex;gap:6px;flex-shrink:0;}
+.btn-edit{background:var(--off);color:var(--black);padding:6px 12px;font-size:11px;font-weight:600;border:1.5px solid var(--border);border-radius:5px;cursor:pointer;font-family:'Inter',sans-serif;}
+.btn-edit:hover{border-color:var(--black);}
+.btn-del{background:var(--white);color:var(--red);padding:6px 10px;font-size:11px;font-weight:600;border:1.5px solid #FCA5A5;border-radius:5px;cursor:pointer;font-family:'Inter',sans-serif;}
+.btn-del:hover{background:#FEF2F2;}
+
+/* EMPTY STATE */
+.empty-state{text-align:center;padding:48px 20px;color:var(--gray);}
+.empty-state div{font-size:36px;margin-bottom:12px;}
+.empty-state p{font-size:13px;}
+
+/* MODAL */
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:500;align-items:flex-end;justify-content:center;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--white);width:100%;max-width:560px;border-radius:16px 16px 0 0;padding:24px 20px 32px;max-height:90vh;overflow-y:auto;}
+.modal-pill{width:36px;height:4px;background:var(--border);border-radius:4px;margin:0 auto 18px;}
+.modal-title{font-size:17px;font-weight:700;margin-bottom:20px;}
+.field{margin-bottom:12px;}
+.field label{display:block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:.5px;color:var(--gray);margin-bottom:4px;}
+.field input,.field textarea,.field select{width:100%;padding:10px 12px;border:1.5px solid var(--border);border-radius:6px;font-size:13px;font-family:'Inter',sans-serif;outline:none;background:var(--white);color:var(--black);}
+.field input:focus,.field textarea:focus,.field select:focus{border-color:var(--black);}
+.field textarea{min-height:80px;resize:vertical;}
+.field-row{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.features-list{display:flex;flex-direction:column;gap:6px;margin-bottom:8px;}
+.feature-row{display:flex;gap:6px;}
+.feature-row input{flex:1;}
+.btn-remove-feat{background:none;border:none;color:var(--red);font-size:16px;cursor:pointer;padding:0 4px;flex-shrink:0;}
+.btn-add-feat{background:var(--off);color:var(--black);padding:7px 12px;font-size:11px;font-weight:500;border:1.5px solid var(--border);border-radius:5px;cursor:pointer;font-family:'Inter',sans-serif;width:100%;}
+.btn-add-feat:hover{border-color:var(--black);}
+.modal-actions{display:flex;gap:8px;margin-top:16px;}
+.btn-save{flex:1;background:var(--black);color:#fff;padding:13px;font-size:13px;font-weight:600;border:none;border-radius:7px;cursor:pointer;font-family:'Inter',sans-serif;}
+.btn-save:hover{background:#222;}
+.btn-cancel{background:var(--off);color:var(--gray);padding:13px 18px;font-size:12px;border:1.5px solid var(--border);border-radius:7px;cursor:pointer;font-family:'Inter',sans-serif;}
+.btn-cancel:hover{color:var(--black);border-color:var(--black);}
+
+/* IMAGE UPLOAD */
+.img-upload-area{border:2px dashed var(--border);border-radius:8px;padding:20px;text-align:center;cursor:pointer;transition:border-color .15s;}
+.img-upload-area:hover{border-color:var(--black);}
+.img-upload-area input{display:none;}
+.img-preview{max-width:100%;max-height:120px;border-radius:6px;margin-top:10px;display:none;}
+
+/* TOAST */
+.toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%) translateY(60px);background:var(--black);color:#fff;padding:10px 20px;font-size:12px;font-weight:500;z-index:999;border-radius:6px;transition:transform .25s;white-space:nowrap;}
+.toast.show{transform:translateX(-50%) translateY(0);}
+.toast.green{background:var(--green);}
+.toast.red{background:var(--red);}
+
+/* FAB */
+.fab{position:fixed;bottom:24px;right:20px;background:var(--black);color:#fff;width:52px;height:52px;border-radius:50%;font-size:24px;border:none;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,0.25);display:flex;align-items:center;justify-content:center;z-index:200;}
+.fab:hover{background:#222;}
+
+.loading{text-align:center;padding:40px;color:var(--gray);font-size:13px;}
+.spinner{display:inline-block;width:20px;height:20px;border:2px solid var(--border);border-top-color:var(--black);border-radius:50%;animation:spin .7s linear infinite;margin-right:8px;vertical-align:middle;}
+@keyframes spin{to{transform:rotate(360deg);}}
+
+@media(max-width:500px){
+  .field-row{grid-template-columns:1fr;}
+  .prod-item{flex-wrap:wrap;}
+  .prod-actions{width:100%;justify-content:flex-end;}
+}
+</style>
+</head>
+<body>
+
+<!-- LOGIN -->
+<div class="login-wrap" id="login-wrap">
+  <div class="login-box">
+    <div class="login-logo">SKETCH<span>TECH</span></div>
+    <div class="login-sub">Admin Panel · Marketplace Manager</div>
+    <div class="login-field">
+      <label>Password</label>
+      <input type="password" id="pw-input" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')doLogin()"/>
+    </div>
+    <button class="login-btn" onclick="doLogin()">Sign In →</button>
+    <div class="login-err" id="login-err">Incorrect password. Try again.</div>
+  </div>
+</div>
+
+<!-- APP -->
+<div class="app" id="app">
+  <div class="topbar">
+    <div class="topbar-logo">SKETCH<span>TECH</span> Admin</div>
+    <div class="topbar-right">
+      <span class="topbar-count" id="prod-count"></span>
+      <button class="btn-logout" onclick="doLogout()">Sign out</button>
+    </div>
+  </div>
+
+  <div class="main">
+    <!-- SETUP BANNER -->
+    <div class="setup-banner" id="setup-banner">
+      <strong>⚡ Connect your Google Sheet</strong>
+      Paste your Google Apps Script Web App URL below. <a href="#setup-guide" onclick="showGuide()" style="color:var(--blue);font-weight:600;">How to get this URL →</a>
+      <div class="setup-field">
+        <input type="text" id="sheet-url" placeholder="https://script.google.com/macros/s/YOUR_ID/exec"/>
+        <button onclick="saveSheetUrl()">Connect</button>
+      </div>
+    </div>
+
+    <div class="section-header">
+      <div class="section-title">Products</div>
+      <button class="btn-add" onclick="openModal()">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add Product
+      </button>
+    </div>
+
+    <div id="prod-list-wrap">
+      <div class="loading"><span class="spinner"></span>Loading products...</div>
+    </div>
+  </div>
+
+  <button class="fab" onclick="openModal()" title="Add product">+</button>
+</div>
+
+<!-- ADD/EDIT MODAL -->
+<div class="modal-overlay" id="modal-overlay">
+  <div class="modal">
+    <div class="modal-pill"></div>
+    <div class="modal-title" id="modal-title">Add New Product</div>
+
+    <div class="field-row">
+      <div class="field">
+        <label>Product Name</label>
+        <input type="text" id="f-name" placeholder="e.g. Forex Signal Bot"/>
+      </div>
+      <div class="field">
+        <label>Emoji</label>
+        <input type="text" id="f-emoji" placeholder="📈" maxlength="2"/>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Category</label>
+        <select id="f-cat">
+          <option value="trading">Trading</option>
+          <option value="scraping">Scraping</option>
+          <option value="automation">Automation</option>
+          <option value="python">Python Tools</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>Badge</label>
+        <select id="f-badge">
+          <option value="">None</option>
+          <option value="New">New</option>
+          <option value="Hot">Hot</option>
+          <option value="Popular">Popular</option>
+          <option value="Bestseller">Bestseller</option>
+        </select>
+      </div>
+    </div>
+    <div class="field-row">
+      <div class="field">
+        <label>Price (USD)</label>
+        <input type="number" id="f-price" placeholder="25" min="1"/>
+      </div>
+      <div class="field">
+        <label>Tagline</label>
+        <input type="text" id="f-tagline" placeholder="One line that sells it."/>
+      </div>
+    </div>
+    <div class="field">
+      <label>Description</label>
+      <textarea id="f-desc" placeholder="Full description shown in the Info sheet..."></textarea>
+    </div>
+    <div class="field">
+      <label>Features</label>
+      <div class="features-list" id="features-list"></div>
+      <button class="btn-add-feat" onclick="addFeatureRow()">+ Add Feature</button>
+    </div>
+    <div class="field">
+      <label>Product Image (optional)</label>
+      <div class="img-upload-area" onclick="document.getElementById('f-img-file').click()">
+        <div style="font-size:24px;margin-bottom:6px;">🖼️</div>
+        <div style="font-size:12px;color:var(--gray);">Tap to upload image</div>
+        <input type="file" id="f-img-file" accept="image/*" onchange="previewImage(this)"/>
+        <img id="img-preview" class="img-preview"/>
+      </div>
+      <input type="text" id="f-img-url" placeholder="Or paste image URL / Google Drive link" style="margin-top:8px;padding:9px 12px;border:1.5px solid var(--border);border-radius:6px;font-size:12px;font-family:'Inter',sans-serif;outline:none;width:100%;"/>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-save" id="save-btn" onclick="saveProduct()">Save Product</button>
+      <button class="btn-cancel" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<!-- SETUP GUIDE MODAL -->
+<div class="modal-overlay" id="guide-overlay">
+  <div class="modal">
+    <div class="modal-pill"></div>
+    <div class="modal-title">⚡ How to Connect Google Sheets</div>
+    <div style="font-size:13px;line-height:1.85;color:var(--gray);">
+      <div style="margin-bottom:12px;"><strong style="color:var(--black);">Step 1.</strong> Go to <a href="https://sheets.google.com" target="_blank" style="color:var(--blue);">sheets.google.com</a> and create a new spreadsheet. Name it <strong style="color:var(--black);">SketchTech Products</strong>.</div>
+      <div style="margin-bottom:12px;"><strong style="color:var(--black);">Step 2.</strong> Click <strong style="color:var(--black);">Extensions → Apps Script</strong>. Delete everything in the editor.</div>
+      <div style="margin-bottom:12px;"><strong style="color:var(--black);">Step 3.</strong> Open the file <strong style="color:var(--black);">google_apps_script.js</strong> that came with your site files. Copy all of it and paste into Apps Script.</div>
+      <div style="margin-bottom:12px;"><strong style="color:var(--black);">Step 4.</strong> Click <strong style="color:var(--black);">Run → setupSheet</strong>. Allow permissions when asked. This creates your product sheet with all current products.</div>
+      <div style="margin-bottom:12px;"><strong style="color:var(--black);">Step 5.</strong> Click <strong style="color:var(--black);">Deploy → New deployment → Web App</strong>. Set <em>Execute as: Me</em> and <em>Who has access: Anyone</em>. Click Deploy and copy the URL.</div>
+      <div style="margin-bottom:12px;"><strong style="color:var(--black);">Step 6.</strong> Paste that URL in the box on this page and click Connect.</div>
+      <div style="padding:12px;background:var(--off);border-radius:6px;font-size:12px;"><strong>Admin password:</strong> SKETCH_ADMIN_2026 — change this in the Apps Script before deploying.</div>
+    </div>
+    <div class="modal-actions">
+      <button class="btn-save" onclick="document.getElementById('guide-overlay').classList.remove('open')">Got it</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+const ADMIN_PASSWORD = 'SKETCH_ADMIN_2026';
+let SHEET_URL = localStorage.getItem('sketch_sheet_url') || '';
+let products = [];
+let editingId = null;
+
+// ── LOGIN ──
+function doLogin(){
+  const pw = document.getElementById('pw-input').value;
+  if(pw === ADMIN_PASSWORD){
+    document.getElementById('login-wrap').style.display='none';
+    document.getElementById('app').style.display='block';
+    init();
+  } else {
+    document.getElementById('login-err').style.display='block';
+    document.getElementById('pw-input').value='';
+  }
+}
+function doLogout(){
+  document.getElementById('login-wrap').style.display='flex';
+  document.getElementById('app').style.display='none';
+  document.getElementById('pw-input').value='';
+}
+document.getElementById('pw-input').addEventListener('keydown',e=>{if(e.key==='Enter')doLogin();});
+
+// ── INIT ──
+async function init(){
+  if(SHEET_URL){
+    document.getElementById('setup-banner').style.display='none';
+    document.getElementById('sheet-url').value=SHEET_URL;
+    await loadProducts();
+  } else {
+    renderProducts([]);
+  }
+}
+
+function saveSheetUrl(){
+  const url = document.getElementById('sheet-url').value.trim();
+  if(!url){toast('Paste your Apps Script URL first','red');return;}
+  SHEET_URL = url;
+  localStorage.setItem('sketch_sheet_url', url);
+  document.getElementById('setup-banner').style.display='none';
+  toast('Connected! Loading products...','green');
+  loadProducts();
+}
+
+// ── LOAD FROM SHEET ──
+async function loadProducts(){
+  document.getElementById('prod-list-wrap').innerHTML='<div class="loading"><span class="spinner"></span>Loading products...</div>';
+  try {
+    const res = await fetch(SHEET_URL+'?action=get');
+    const data = await res.json();
+    if(Array.isArray(data)){
+      products = data;
+      renderProducts(products);
+    } else {
+      throw new Error(data.error||'Failed');
+    }
+  } catch(e){
+    // fallback to local defaults
+    products = getDefaultProducts();
+    renderProducts(products);
+    toast('Using local products — sheet not connected yet','');
+  }
+}
+
+// ── RENDER LIST ──
+function renderProducts(prods){
+  document.getElementById('prod-count').textContent=prods.length+' product'+(prods.length!==1?'s':'');
+  if(!prods.length){
+    document.getElementById('prod-list-wrap').innerHTML='<div class="empty-state"><div>📦</div><p>No products yet. Tap + to add your first one.</p></div>';
+    return;
+  }
+  const bc=b=>b==='Bestseller'||b==='Hot'||b==='Popular'?'hot':b==='New'?'new':'';
+  document.getElementById('prod-list-wrap').innerHTML=`<div class="prod-list">${prods.map(p=>`
+    <div class="prod-item" data-id="${p.id}">
+      <div class="prod-drag">⠿</div>
+      <div class="prod-emoji-big">${p.emoji||'📦'}</div>
+      <div class="prod-info">
+        <div class="prod-name-row">
+          <div class="prod-item-name">${p.name}</div>
+          ${p.badge?`<span class="prod-item-badge ${bc(p.badge)}">${p.badge}</span>`:''}
+        </div>
+        <div class="prod-meta">${p.cat} · ${p.tagline||''}</div>
+      </div>
+      <div class="prod-price-tag">$${p.price}</div>
+      <div class="prod-actions">
+        <button class="btn-edit" onclick="openModal(${p.id})">Edit</button>
+        <button class="btn-del" onclick="deleteProduct(${p.id})">✕</button>
+      </div>
+    </div>`).join('')}</div>`;
+}
+
+// ── MODAL ──
+function openModal(id=null){
+  editingId=id;
+  document.getElementById('modal-title').textContent=id?'Edit Product':'Add New Product';
+  document.getElementById('save-btn').textContent=id?'Save Changes':'Add Product';
+  clearForm();
+  if(id){
+    const p=products.find(x=>Number(x.id)===Number(id));
+    if(p){
+      document.getElementById('f-name').value=p.name||'';
+      document.getElementById('f-emoji').value=p.emoji||'';
+      document.getElementById('f-cat').value=p.cat||'python';
+      document.getElementById('f-badge').value=p.badge||'';
+      document.getElementById('f-price').value=p.price||'';
+      document.getElementById('f-tagline').value=p.tagline||'';
+      document.getElementById('f-desc').value=p.desc||'';
+      document.getElementById('f-img-url').value=p.image||'';
+      const feats=Array.isArray(p.features)?p.features:(typeof p.features==='string'?p.features.split('\n').filter(Boolean):[]);
+      feats.forEach(f=>addFeatureRow(f));
+      if(!feats.length)addFeatureRow();
+    }
+  } else {
+    addFeatureRow();addFeatureRow();addFeatureRow();
+  }
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal(){document.getElementById('modal-overlay').classList.remove('open');editingId=null;}
+function clearForm(){
+  ['f-name','f-emoji','f-price','f-tagline','f-desc','f-img-url'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-cat').value='python';
+  document.getElementById('f-badge').value='';
+  document.getElementById('features-list').innerHTML='';
+  document.getElementById('img-preview').style.display='none';
+}
+
+function addFeatureRow(val=''){
+  const div=document.createElement('div');
+  div.className='feature-row';
+  div.innerHTML=`<input type="text" placeholder="e.g. Works on Windows, Mac, and Linux" value="${val.replace(/"/g,'&quot;')}"/><button class="btn-remove-feat" onclick="this.parentElement.remove()">×</button>`;
+  document.getElementById('features-list').appendChild(div);
+}
+
+function previewImage(input){
+  const file=input.files[0];
+  if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    const img=document.getElementById('img-preview');
+    img.src=e.target.result;
+    img.style.display='block';
+    document.getElementById('f-img-url').value=e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+async function saveProduct(){
+  const name=document.getElementById('f-name').value.trim();
+  const price=document.getElementById('f-price').value;
+  if(!name||!price){toast('Name and price are required','red');return;}
+  const features=[...document.querySelectorAll('#features-list input')].map(i=>i.value.trim()).filter(Boolean);
+  const product={
+    id:editingId||null,
+    name,
+    emoji:document.getElementById('f-emoji').value||'📦',
+    cat:document.getElementById('f-cat').value,
+    badge:document.getElementById('f-badge').value,
+    price:Number(price),
+    tagline:document.getElementById('f-tagline').value.trim(),
+    desc:document.getElementById('f-desc').value.trim(),
+    features,
+    image:document.getElementById('f-img-url').value.trim()
+  };
+
+  document.getElementById('save-btn').textContent='Saving...';
+  document.getElementById('save-btn').disabled=true;
+
+  try {
+    if(SHEET_URL){
+      const res=await fetch(SHEET_URL,{method:'POST',body:JSON.stringify({action:editingId?'edit':'add',password:ADMIN_PASSWORD,product})});
+      const data=await res.json();
+      if(data.error)throw new Error(data.error);
+    } else {
+      // local only
+      if(editingId){
+        const idx=products.findIndex(p=>Number(p.id)===Number(editingId));
+        if(idx>-1)products[idx]={...product,id:Number(editingId)};
+      } else {
+        const maxId=products.reduce((m,p)=>Math.max(m,Number(p.id)),0);
+        products.push({...product,id:maxId+1});
+      }
+    }
+    closeModal();
+    await loadProducts();
+    toast(editingId?'Product updated!':'Product added!','green');
+  } catch(e){
+    toast('Error: '+e.message,'red');
+  }
+  document.getElementById('save-btn').textContent=editingId?'Save Changes':'Add Product';
+  document.getElementById('save-btn').disabled=false;
+}
+
+async function deleteProduct(id){
+  if(!confirm('Delete this product?'))return;
+  try {
+    if(SHEET_URL){
+      const res=await fetch(SHEET_URL,{method:'POST',body:JSON.stringify({action:'delete',password:ADMIN_PASSWORD,id})});
+      const data=await res.json();
+      if(data.error)throw new Error(data.error);
+    } else {
+      products=products.filter(p=>Number(p.id)!==Number(id));
+    }
+    await loadProducts();
+    toast('Product deleted','');
+  } catch(e){
+    toast('Error: '+e.message,'red');
+  }
+}
+
+function showGuide(){document.getElementById('guide-overlay').classList.add('open');}
+
+function toast(msg,type=''){
+  const t=document.getElementById('toast');
+  t.textContent=msg;
+  t.className='toast show'+(type?' '+type:'');
+  setTimeout(()=>t.className='toast',3000);
+}
+
+function getDefaultProducts(){
+  return [
+    {id:1,name:'Forex Signal Bot',cat:'trading',emoji:'📈',price:35,badge:'Bestseller',tagline:'Automate your MT5 trades.',desc:'',features:[]},
+    {id:2,name:'Crypto Scalper',cat:'trading',emoji:'₿',price:45,badge:'Hot',tagline:'High-frequency crypto scalping.',desc:'',features:[]},
+    {id:3,name:'Stock Portfolio Tracker',cat:'trading',emoji:'📊',price:25,badge:'',tagline:'Monitor your portfolio in real time.',desc:'',features:[]},
+    {id:4,name:'Universal Web Scraper',cat:'scraping',emoji:'🕷️',price:20,badge:'New',tagline:'Scrape any website. Any scale.',desc:'',features:[]},
+    {id:5,name:'Amazon Price Tracker',cat:'scraping',emoji:'🛒',price:18,badge:'',tagline:'Never miss a price drop again.',desc:'',features:[]},
+    {id:6,name:'WhatsApp Bulk Sender',cat:'automation',emoji:'💬',price:28,badge:'Popular',tagline:'Reach thousands with one script.',desc:'',features:[]},
+    {id:7,name:'Email Automation Suite',cat:'automation',emoji:'✉️',price:22,badge:'',tagline:'Scheduled campaigns, zero cost.',desc:'',features:[]},
+    {id:8,name:'PDF Data Extractor',cat:'python',emoji:'📄',price:15,badge:'New',tagline:'Pull structured data out of any PDF.',desc:'',features:[]},
+    {id:9,name:'File Organizer Bot',cat:'python',emoji:'📁',price:12,badge:'',tagline:'Auto-sort your files. Set and forget.',desc:'',features:[]},
+    {id:10,name:'Invoice Data Extractor',cat:'python',emoji:'🧾',price:18,badge:'New',tagline:'Extract invoice data instantly.',desc:'',features:[]},
+  ];
+}
+</script>
+</body>
+</html>
